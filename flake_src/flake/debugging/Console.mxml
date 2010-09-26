@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="100%" 
+	height="100%" 
+	visible="false"
+	addedToStage="_onCreationComplete()">
+	
+	<mx:Script>
+    <![CDATA[
+      import flash.events.KeyboardEvent;
+      import com.flexspy.FlexSpy;
+      
+      public function onKeyPress(e:KeyboardEvent):void
+      {
+        if(e.keyCode == 68 && e.ctrlKey)
+        {
+          if(currentState == 'debug') _hide();
+          else _show();
+        }
+      }
+      
+      private function _show():void
+      {
+        visible = true;
+        currentState = 'debug';
+      }
+      
+      private function _hide():void
+      {
+        currentState = null;
+        visible = false;
+      }
+      
+      [Bindable]
+      private var logMessage:String;
+      public function log(message:String):void
+      {
+      	logMessage += ("\n" + message);
+      	trace(message);
+      }
+      
+      public function _onCreationComplete():void
+      {
+      	_registerBindKeys();
+      }
+      
+      private function _registerBindKeys():void
+      {
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
+      }
+    ]]>
+  </mx:Script>
+  
+  <mx:states>
+    <mx:State name="debug">
+      <mx:AddChild>
+        <mx:Panel width="100%" height="300" color="black" title="Debogueur">
+          <mx:ControlBar width="100%">
+            <mx:Button label="Espionner" click="FlexSpy.show()"/>
+            <mx:Button label="Cacher" click="{currentState = null}"/>
+          </mx:ControlBar>
+          <mx:Text text="{logMessage}" width="100%" height="100%"/>
+        </mx:Panel>
+      </mx:AddChild>
+    </mx:State>
+  </mx:states>
+  
+</mx:VBox>
